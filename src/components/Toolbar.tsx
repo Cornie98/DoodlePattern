@@ -25,10 +25,10 @@ const TOOLS: {
   materialIcon?: string;
 }[] = [
   { id: "pencil", label: "Pencil", icon: "✎" },
-  { id: "marker", label: "Marker", icon: "▮" },
-  { id: "brush", label: "Brush", icon: "🖌" },
+  { id: "marker", label: "Marker", materialIcon: "ink_pen" },
+  { id: "brush", label: "Brush", materialIcon: "brush" },
   { id: "eraser", label: "Eraser", materialIcon: "ink_eraser" },
-  { id: "fill", label: "Fill", icon: "⬚" },
+  { id: "fill", label: "Fill", materialIcon: "colors" },
   { id: "sticker", label: "Stickers", icon: "★" },
 ];
 
@@ -268,7 +268,7 @@ export function Toolbar({
         </button>
         <button type="button" className="tool-btn sky" onClick={onExport}>
           <span className="icon" aria-hidden>
-            ↓
+            <span className="material-symbols-outlined">save</span>
           </span>
           Export PNG
         </button>

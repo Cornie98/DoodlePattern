@@ -17,7 +17,9 @@ export const STICKERS: StickerDef[] = [
   { id: "diamond", name: "Diamond", src: "/stickers/diamond.svg" },
   { id: "swirl", name: "Swirl", src: "/stickers/swirl.svg" },
   { id: "zigzag", name: "Zigzag", src: "/stickers/zigzag.svg" },
-  { id: "petal", name: "Petal", src: "/stickers/petal.svg" },
+  { id: "smiley", name: "Smiley", src: "/stickers/smiley.svg" },
+  { id: "alien", name: "Alien", src: "/stickers/alien.svg" },
+  { id: "cat", name: "Cat", src: "/stickers/cat.svg" },
   { id: "burst", name: "Burst", src: "/stickers/burst.svg" },
 ];
 
