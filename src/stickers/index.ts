@@ -2,6 +2,8 @@ export interface StickerDef {
   id: string;
   name: string;
   src: string;
+  /** `tint` = recolor with brush color (SVG stickers). `photo` = stamp as-is. */
+  mode?: "tint" | "photo";
 }
 
 export const STICKERS: StickerDef[] = [
@@ -40,7 +42,7 @@ export function loadSticker(src: string): Promise<HTMLImageElement> {
   });
 }
 
-/** Stamp sticker tinted with color using source-in compositing. */
+
 export function stampSticker(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
@@ -63,4 +65,40 @@ export function stampSticker(
   octx.fillRect(0, 0, s, s);
 
   ctx.drawImage(off, ox, oy);
+}
+
+
+export function stampPhoto(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  x: number,
+  y: number,
+  size: number
+): void {
+  const max = Math.max(16, size * 3);
+  const aspect = img.naturalWidth / Math.max(1, img.naturalHeight);
+  let w = max;
+  let h = max;
+  if (aspect >= 1) {
+    h = max / aspect;
+  } else {
+    w = max * aspect;
+  }
+  ctx.drawImage(img, x - w / 2, y - h / 2, w, h);
+}
+
+export function stampAt(
+  ctx: CanvasRenderingContext2D,
+  img: HTMLImageElement,
+  sticker: StickerDef,
+  x: number,
+  y: number,
+  size: number,
+  color: string
+): void {
+  if (sticker.mode === "photo") {
+    stampPhoto(ctx, img, x, y, size);
+  } else {
+    stampSticker(ctx, img, x, y, size, color);
+  }
 }

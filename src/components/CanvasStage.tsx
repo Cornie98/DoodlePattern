@@ -23,7 +23,7 @@ import {
 } from "../canvas/history";
 import { exportPng } from "../canvas/exportPng";
 import { canvasToDataUrl } from "../canvas/flatten";
-import { loadSticker, stampSticker, type StickerDef } from "../stickers";
+import { loadSticker, stampAt, type StickerDef } from "../stickers";
 
 export const TILE_SIZE = 512;
 const WRAP_MS = 550;
@@ -237,6 +237,7 @@ export const CanvasStage = forwardRef<CanvasStageHandle, CanvasStageProps>(
       const ctx = canvas?.getContext("2d");
       if (!canvas || !ctx) return;
 
+      e.preventDefault();
       canvas.setPointerCapture(e.pointerId);
       const { x, y } = getCanvasCoords(canvas, e.clientX, e.clientY);
       const t = toolRef.current;
@@ -254,10 +255,10 @@ export const CanvasStage = forwardRef<CanvasStageHandle, CanvasStageProps>(
         pushHistory();
         try {
           const img = await loadSticker(s.src);
-          stampSticker(ctx, img, x, y, sizeRef.current, colorRef.current);
+          stampAt(ctx, img, s, x, y, sizeRef.current, colorRef.current);
           notifyTile();
         } catch {
-          /* ignore load errors */
+          
         }
         return;
       }

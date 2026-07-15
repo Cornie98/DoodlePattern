@@ -22,6 +22,7 @@ export default function App() {
   const [hardness, setHardness] = useState(0.85);
   const [backgroundColor, setBackgroundColor] = useState<string | null>(null);
   const [sticker, setSticker] = useState<StickerDef | null>(STICKERS[0]);
+  const [libraryStamps, setLibraryStamps] = useState<StickerDef[]>([]);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("backdrop");
   const [tileUrl, setTileUrl] = useState("");
   const [wrapPhase, setWrapPhase] = useState(0);
@@ -99,6 +100,7 @@ export default function App() {
             backgroundColor={backgroundColor}
             stickerId={sticker?.id ?? null}
             stickers={STICKERS}
+            libraryStamps={libraryStamps}
             previewMode={previewMode}
             canUndo={canUndo}
             canRedo={canRedo}
@@ -110,6 +112,21 @@ export default function App() {
             onBackgroundColor={setBackgroundColor}
             onSticker={(s) => {
               setSticker(s);
+              setTool("sticker");
+            }}
+            onAddFromLibrary={(stamps) => {
+              setLibraryStamps((prev) => {
+                const next = [...prev, ...stamps];
+                const overflow = next.length - 4;
+                if (overflow > 0) {
+                  const removed = next.splice(0, overflow);
+                  for (const s of removed) {
+                    if (s.src.startsWith("blob:")) URL.revokeObjectURL(s.src);
+                  }
+                }
+                return next;
+              });
+              setSticker(stamps[stamps.length - 1]);
               setTool("sticker");
             }}
             onWrap={() => stageRef.current?.wrap()}

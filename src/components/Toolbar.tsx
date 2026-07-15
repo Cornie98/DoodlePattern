@@ -29,7 +29,7 @@ const TOOLS: {
   { id: "brush", label: "Brush", materialIcon: "brush" },
   { id: "eraser", label: "Eraser", materialIcon: "ink_eraser" },
   { id: "fill", label: "Fill", materialIcon: "colors" },
-  { id: "sticker", label: "Stickers", icon: "★" },
+  { id: "sticker", label: "Stamps", icon: "★" },
 ];
 
 const STROKE_TOOLS = new Set<DrawTool>([
@@ -48,6 +48,7 @@ interface ToolbarProps {
   backgroundColor: string | null;
   stickerId: string | null;
   stickers: StickerDef[];
+  libraryStamps: StickerDef[];
   previewMode: "off" | "backdrop" | "split";
   canUndo: boolean;
   canRedo: boolean;
@@ -58,6 +59,7 @@ interface ToolbarProps {
   onHardness: (n: number) => void;
   onBackgroundColor: (c: string | null) => void;
   onSticker: (s: StickerDef) => void;
+  onAddFromLibrary: (stamps: StickerDef[]) => void;
   onWrap: () => void;
   onCyclePreview: () => void;
   onUndo: () => void;
@@ -75,6 +77,7 @@ export function Toolbar({
   backgroundColor,
   stickerId,
   stickers,
+  libraryStamps,
   previewMode,
   canUndo,
   canRedo,
@@ -85,6 +88,7 @@ export function Toolbar({
   onHardness,
   onBackgroundColor,
   onSticker,
+  onAddFromLibrary,
   onWrap,
   onCyclePreview,
   onUndo,
@@ -193,7 +197,7 @@ export function Toolbar({
             <input
               type="range"
               min={2}
-              max={64}
+              max={100}
               value={brushSize}
               onChange={(e) => onBrushSize(Number(e.target.value))}
             />
@@ -277,8 +281,10 @@ export function Toolbar({
       {tool === "sticker" && (
         <StickerPalette
           stickers={stickers}
+          libraryStamps={libraryStamps}
           selectedId={stickerId}
           onSelect={onSticker}
+          onAddFromLibrary={onAddFromLibrary}
         />
       )}
     </div>
