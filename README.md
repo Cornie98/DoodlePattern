@@ -1,6 +1,16 @@
-# DoodlePattern
+# DoodlePattern ✎
 
-A playful, local-only seamless pattern maker. Draw on a square tile, wrap the canvas to bring edges into the center, and export a PNG.
+A playful, local seamless pattern maker. Draw on a square tile, wrap the canvas to bring edges into the center, and export a PNG.
+
+## Tech stack
+
+- **Vite** - build tool and dev server
+- **React 19** - UI
+- **TypeScript** - typed app code
+- **HTML Canvas 2D** - drawing, wrap, stamps, and PNG export
+- **Oxlint** - linting
+
+
 
 ## Run
 
