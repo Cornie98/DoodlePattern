@@ -19,7 +19,10 @@
   --font-display: "Fredoka", system-ui, sans-serif;
   --font-title: "Darumadrop One", system-ui;
   --font-body: "Nunito", system-ui, sans-serif;
-  --canvas-size: min(72vw, 512px);
+  --panel-width: 560px;
+  --ui-chrome: 22rem;
+  /* Fallback when container queries aren't available */
+  --canvas-size: min(96vw, var(--panel-width), calc(100dvh - var(--ui-chrome)));
 }
 
 *,
@@ -80,15 +83,21 @@ select {
   position: relative;
   z-index: 1;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 100dvh;
-  padding: 1.25rem 1rem 2.5rem;
+  flex-direction: row;
+  align-items: stretch;
+  height: 100dvh;
+  max-height: 100dvh;
+  padding: 0.75rem 1rem 0.75rem 0.5rem;
   gap: 0.75rem;
+  overflow: hidden;
 }
 
 .brand {
-  text-align: center;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.15rem;
   animation: brand-pop 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
@@ -96,12 +105,15 @@ select {
   font-family: var(--font-title);
   font-weight: 400;
   font-style: normal;
-  font-size: clamp(2.8rem, 10vw, 4.4rem);
+  font-size: clamp(1.8rem, 5vh, 2.8rem);
   line-height: 1.05;
   margin: 0;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.04em;
   color: var(--ink);
   text-shadow: 3px 3px 0 var(--coral);
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  white-space: nowrap;
 }
 
 .brand p {
@@ -115,9 +127,33 @@ select {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  gap: 0.5rem;
   width: 100%;
   max-width: 1100px;
+}
+
+/* Canvas grows into leftover space; toolbar keeps full height */
+.stage-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: min(100%, var(--panel-width));
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.canvas-slot {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  container-type: size;
+  display: grid;
+  place-items: center;
 }
 
 .pattern-backdrop {
@@ -143,8 +179,8 @@ select {
 
 .canvas-wrap {
   position: relative;
-  width: var(--canvas-size);
-  max-width: 512px;
+  width: min(100cqw, 100cqh);
+  max-width: 100%;
   aspect-ratio: 1;
   border-radius: var(--radius);
   box-shadow:
@@ -162,6 +198,12 @@ select {
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+@supports not (width: 1cqw) {
+  .canvas-wrap {
+    width: var(--canvas-size);
+  }
 }
 
 .canvas-wrap.wrapping {
@@ -336,7 +378,7 @@ select {
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  width: min(100%, 560px);
+  width: 100%;
   padding: 0.85rem;
   background: var(--panel);
   border: 2px solid var(--ink);
@@ -347,8 +389,10 @@ select {
 .workspace {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  width: 100%;
+  align-items: stretch;
+  flex: 0 0 auto;
+  width: var(--align-width, 100%);
+  max-width: 100%;
   gap: 0.75rem;
 }
 
@@ -357,8 +401,20 @@ select {
   grid-template-columns: 1fr 1fr;
   align-items: stretch;
   gap: 0.75rem;
+  width: min(100%, 1100px);
+}
+
+.app--split-preview .stage-main {
+  width: min(100%, 1100px);
+}
+
+.app--split-preview .canvas-slot {
+  width: min(100%, var(--panel-width));
+  align-self: center;
+}
+
+.app--split-preview .workspace {
   width: 100%;
-  max-width: 1100px;
 }
 
 .workspace--split .toolbar {
@@ -418,9 +474,10 @@ select {
   color: var(--ink);
   font-weight: 800;
   font-size: 0.78rem;
-  padding: 0.45rem 0.55rem;
-  min-width: 2.75rem;
-  min-height: 2.75rem;
+  width: 4rem;
+  height: 3.5rem;
+  padding: 0.35rem 0.4rem;
+  box-sizing: border-box;
   cursor: pointer;
   box-shadow: var(--shadow-sm);
   transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
@@ -820,6 +877,7 @@ select {
 }
 
 .hint {
+  flex: 0 0 auto;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--ink-soft);
@@ -827,6 +885,10 @@ select {
   max-width: 36rem;
   margin: 0;
   line-height: 1.45;
+}
+
+.hint--compact {
+  display: none;
 }
 
 @keyframes brand-pop {
@@ -862,75 +924,192 @@ select {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-height: 960px) {
   :root {
-    --canvas-size: min(92vw, 512px);
+    --ui-chrome: 15rem;
+    --canvas-size: min(96vw, calc(100dvh - var(--ui-chrome)));
   }
 
   .app {
-    padding: 0.85rem 0.6rem 2rem;
+    flex-direction: column;
+    padding: 0.35rem 0.45rem 0.6rem;
+    gap: 0.35rem;
+    justify-content: flex-start;
+  }
+
+  .brand {
+    display: none;
+  }
+
+  .stage {
+    gap: 0.4rem;
+  }
+
+  .stage-main {
+    gap: 0.4rem;
+  }
+
+  .hint {
+    display: none;
+  }
+
+  .hint--compact {
+    display: block;
+    font-size: 0.7rem;
+    margin: 0;
+    opacity: 0.85;
   }
 
   .toolbar {
     width: 100%;
     max-width: 100%;
-    padding: 0.7rem;
+    padding: 0.4rem 0.45rem;
+    gap: 0.35rem;
     overflow: hidden;
   }
 
-  .tool-btn {
-    min-width: 2.5rem;
-    min-height: 2.5rem;
-    font-size: 0.7rem;
-  }
-
-  .toolbar-row--colors {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.65rem;
-  }
-
-  .stroke-sliders {
-    width: 100%;
-    flex: none;
-  }
-
-  .stroke-sliders .size-control:not(.bg-control) {
-    grid-template-columns: 4.1rem minmax(0, 1fr) 2.5rem;
-    font-size: 0.78rem;
-    gap: 0.3rem;
-  }
-
-  .workspace--split {
-    gap: 0.5rem;
-  }
-
-  .workspace--split .toolbar {
-    padding: 0.55rem;
-    gap: 0.45rem;
-  }
-
-  .workspace--split .toolbar-row {
+  .toolbar-row {
     gap: 0.25rem;
   }
 
-  .workspace--split .swatch-grid {
-    grid-template-columns: repeat(4, 1.5rem);
-    gap: 0.3rem;
+  .tool-btn {
+    width: 2.65rem;
+    height: 2.65rem;
+    padding: 0.2rem;
+    font-size: 0;
+    gap: 0;
   }
 
-  .workspace--split .swatch {
+  .tool-btn__label {
+    display: none;
+  }
+
+  .tool-btn .icon {
+    font-size: 1.15rem;
+  }
+
+  .tool-btn .material-symbols-outlined {
+    font-size: 1.25rem;
+  }
+
+  .wrap-btn {
+    padding: 0.5rem 0.7rem;
+    gap: 0.4rem;
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  .wrap-btn__icon {
+    font-size: 1.15rem;
+  }
+
+  .wrap-btn__label {
+    font-size: 0.95rem;
+  }
+
+  .toolbar-row--colors {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .color-block {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .draw-color-picker__label {
+    display: none;
+  }
+
+  .swatch-grid {
+    grid-template-columns: repeat(6, 1.35rem);
+    gap: 0.22rem;
+  }
+
+  .swatch {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  .draw-color-picker__chip,
+  .bg-color-input {
     width: 1.5rem;
     height: 1.5rem;
   }
 
-  .workspace--split .stroke-sliders .size-control:not(.bg-control) {
-    grid-template-columns: 3.6rem minmax(0, 1fr) 2.3rem;
-    font-size: 0.72rem;
+  .stroke-sliders {
+    width: 100%;
+    flex: 1 1 100%;
+    gap: 0.2rem;
+  }
+
+  .stroke-sliders .size-control:not(.bg-control) {
+    grid-template-columns: 3.4rem minmax(0, 1fr) 2.2rem;
+    font-size: 0.7rem;
+    gap: 0.25rem;
+  }
+
+  .bg-control {
+    font-size: 0.7rem;
+    gap: 0.3rem;
+  }
+
+  .bg-clear-btn {
+    font-size: 0.65rem;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .sticker-palette {
+    gap: 0.22rem;
+    padding-top: 0.15rem;
+    margin-top: 0;
+  }
+
+  .sticker-btn {
+    width: 2.15rem;
+    height: 2.15rem;
+    padding: 0.15rem;
+  }
+
+  .workspace {
+    gap: 0.35rem;
+  }
+
+  .workspace--split {
+    gap: 0.35rem;
+    grid-template-columns: 1fr;
+  }
+
+  .workspace--split .toolbar {
+    padding: 0.4rem 0.45rem;
+    gap: 0.35rem;
   }
 
   .preview-panel,
   .preview-tile {
-    min-height: 100%;
+    min-height: 8rem;
+  }
+}
+
+@media (max-width: 640px) and (max-height: 760px) {
+  :root {
+    --ui-chrome: 13rem;
+    --canvas-size: min(96vw, calc(100dvh - var(--ui-chrome)));
+  }
+
+  .hint--compact {
+    display: none;
+  }
+
+  .wrap-btn {
+    padding: 0.4rem 0.55rem;
+  }
+
+  .wrap-btn__label {
+    font-size: 0.85rem;
   }
 }

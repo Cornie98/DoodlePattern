@@ -133,7 +133,7 @@ export function Toolbar({
                 t.icon
               )}
             </span>
-            {t.label}
+            <span className="tool-btn__label">{t.label}</span>
           </button>
         ))}
       </div>
@@ -243,11 +243,13 @@ export function Toolbar({
           <span className="icon" aria-hidden>
             {previewMode === "split" ? "▥" : "⊞"}
           </span>
-          {previewMode === "off"
-            ? "Pattern preview"
-            : previewMode === "backdrop"
-              ? "Preview: bg"
-              : "Preview: split"}
+          <span className="tool-btn__label">
+            {previewMode === "off"
+              ? "Pattern preview"
+              : previewMode === "backdrop"
+                ? "Preview: bg"
+                : "Preview: split"}
+          </span>
         </button>
         <button
           type="button"
@@ -256,7 +258,10 @@ export function Toolbar({
           disabled={!canUndo}
           title="Undo"
         >
-          Undo
+          <span className="icon" aria-hidden>
+            <span className="material-symbols-outlined">undo</span>
+          </span>
+          <span className="tool-btn__label">Undo</span>
         </button>
         <button
           type="button"
@@ -265,16 +270,27 @@ export function Toolbar({
           disabled={!canRedo}
           title="Redo"
         >
-          Redo
+          <span className="icon" aria-hidden>
+            <span className="material-symbols-outlined">redo</span>
+          </span>
+          <span className="tool-btn__label">Redo</span>
         </button>
-        <button type="button" className="tool-btn" onClick={onClear}>
-          Clear
+        <button
+          type="button"
+          className="tool-btn"
+          onClick={onClear}
+          title="Clear"
+        >
+          <span className="icon" aria-hidden>
+            <span className="material-symbols-outlined">delete</span>
+          </span>
+          <span className="tool-btn__label">Clear</span>
         </button>
-        <button type="button" className="tool-btn sky" onClick={onExport}>
+        <button type="button" className="tool-btn sky" onClick={onExport} title="Export PNG">
           <span className="icon" aria-hidden>
             <span className="material-symbols-outlined">save</span>
           </span>
-          Export PNG
+          <span className="tool-btn__label">Export PNG</span>
         </button>
       </div>
 

@@ -100,10 +100,30 @@ export const CanvasStage = forwardRef<CanvasStageHandle, CanvasStageProps>(
     const colorRef = useRef(color);
     const sizeRef = useRef(brushSize);
     const stickerRef = useRef(sticker);
+    const wrapRef = useRef<HTMLDivElement>(null);
     const [wrapShot, setWrapShot] = useState<WrapSnapshot | null>(null);
 
     useEffect(() => {
       void ensurePencilTip();
+    }, []);
+
+    useEffect(() => {
+      const el = wrapRef.current;
+      if (!el) return;
+      const main = el.closest(".stage-main") as HTMLElement | null;
+      const sync = () => {
+        const w = el.getBoundingClientRect().width;
+        if (main && w > 0) {
+          main.style.setProperty("--align-width", `${Math.round(w)}px`);
+        }
+      };
+      sync();
+      const ro = new ResizeObserver(sync);
+      ro.observe(el);
+      return () => {
+        ro.disconnect();
+        main?.style.removeProperty("--align-width");
+      };
     }, []);
 
     useEffect(() => {
@@ -300,6 +320,7 @@ export const CanvasStage = forwardRef<CanvasStageHandle, CanvasStageProps>(
 
     return (
       <div
+        ref={wrapRef}
         className={`canvas-wrap${wrapShot ? " wrapping" : ""}${backgroundColor ? " canvas-wrap--solid" : ""}`}
         style={
           backgroundColor
